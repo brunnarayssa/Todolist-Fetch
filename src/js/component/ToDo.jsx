@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const ToDo = () => {
     const [inputText, setInputText] = useState("");
-    const [task, setTask] = useState(["Sacar al perro.",  "Cambiar las sabanas.",  "Estudiar."]);
+    const [task, setTask] = useState(["Sacar al perro.",  "Limpiar la casa.",  "Estudiar."]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
