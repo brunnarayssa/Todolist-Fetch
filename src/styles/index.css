@@ -1,23 +1,129 @@
-
-
 body {
-    background-color: #0f0f0f; /* Blanco suave */
-    color: #faf7f7; /* Texto negro-gris oscuro */
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Para centrar el contenido verticalmente */
-  }
-  .container {
-    width: 460px;
-    margin: auto;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #4d4d4d;
 }
 
-input {
-    width: 100%;
-    padding: 8px 16px;
+h1 {
+  font-size: 6rem;
+  font-weight: 100;
+  color: rgba(175, 47, 47, 0.2);
+  text-align: center;
+  margin-bottom: 20px;
+}
 
+.container {
+  width: 550px;
+  background: #ffffff;
+  border-radius: 8px;
+  position: relative; /* Necesario para sombras apiladas */
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.1),  /* Primera sombra, cercana */
+    0 3px 6px rgba(0, 0, 0, 0.1),  /* Segunda sombra */
+    0 5px 10px rgba(0, 0, 0, 0.1); /* Tercera sombra, más lejana */
+}
+
+.container::after {
+  content: "";
+  position: absolute;
+  top: 6px; /* Desplazamiento vertical */
+  left: 6px; /* Desplazamiento horizontal */
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 8px;
+  z-index: -1; /* Envía la sombra detrás */
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.1), 
+    0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.container::before {
+  content: "";
+  position: absolute;
+  top: 12px; /* Desplazamiento vertical */
+  left: 12px; /* Desplazamiento horizontal */
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 8px;
+  z-index: -2; /* Envía aún más atrás */
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.1), 
+    0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+form {
+  padding: 20px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-bottom: 2px solid #ededed;
+  font-size: 1.5rem;
+  box-sizing: border-box;
+  outline: none;
+  font-weight: 300;
+}
+
+input[type="text"]::placeholder {
+  color: #e6e6e6;
+  font-style: italic;
+}
+
+.list-group {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list-group-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #ededed;
+  font-size: 1.5rem;
+  font-weight: 300;
+  transition: background 0.2s ease;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.list-group-item:hover {
+  background: #f5f5f5;
+}
+
+.list-group-item span {
+  flex-grow: 1;
+}
+
+.text-muted {
+  font-size: 1rem;
+  color: #bfbfbf;
+  padding: 10px 20px;
+  text-align: left;
+  font-weight: 300;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #cc9a9a;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.btn-close:hover {
+  color: #af5b5e;
 }
