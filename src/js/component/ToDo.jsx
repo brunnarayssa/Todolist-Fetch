@@ -6,39 +6,33 @@ const ToDo = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (inputText !== "") {
-            setTask([...task, inputText])
-            setInputText("");
-            console.log(task);
-        }
-        const toDoList = task.map((item)=>{
-             return {
-                "label": item,
-                "done": false
-            }
-           
-          })
-          console.log(toDoList);
-        fetch('https://playground.4geeks.com/todo/todos/brunnaCarvalho', {
+        if (inputText.trim() === "") return;
+
+        const updatedTasks = [...task, inputText];
+        setTask(updatedTasks);
+        setInputText("");
+
+        const toDoList = updatedTasks.map((item) => ({
+            label: item,
+            done: false,
+        }));
+
+        fetch("https://playground.4geeks.com/todo/todos/brunnaCarvalho", {
             method: "PUT",
             body: JSON.stringify(toDoList),
             headers: {
-                'Content-Type': 'application/json'
-            }
+                "Content-Type": "application/json",
+            },
         })
-            .then(response => response.text())
-            .then(result => console.log(result))
-            .catch(error => console.log('error', error));
-
+            .then((response) => response.text())
+            .then((result) => console.log(result))
+            .catch((error) => console.log("Error:", error));
     };
 
     const handleDelete = (i) => {
-        setTask(task.filter((_, index)=>{
-            return index != i
-          })
-          )
-    }
-  
+        setTask(task.filter((_, index) => index !== i));
+    };
+
     return (
         <div className="container d-flex flex-column">
             <div className="text-center">
@@ -46,7 +40,7 @@ const ToDo = () => {
             </div>
             <form onSubmit={handleSubmit}>
                 <input
-                    onChange={(e) => { setInputText(e.target.value) }}
+                    onChange={(e) => setInputText(e.target.value)}
                     value={inputText}
                     type="text"
                     placeholder="No tasks, add a task"
@@ -54,15 +48,13 @@ const ToDo = () => {
                 <ul className="list-group">
                     {task.map((item, index) => (
                         <li key={index} className="list-group-item d-flex justify-content-between">
-                            <span>
-                                {item}
-                            </span>
+                            <span>{item}</span>
                             <button
                                 type="button"
                                 className="btn-close"
-                                onClick={()=>{handleDelete(index)}}
-                            >
-                            </button>
+                                onClick={() => handleDelete(index)}
+                                aria-label="Eliminar tarea"
+                            />
                         </li>
                     ))}
                 </ul>
