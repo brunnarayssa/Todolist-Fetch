@@ -17,7 +17,7 @@ const ToDo = () => {
             done: false,
         }));
 
-        fetch("https://playground.4geeks.com/todo/todos/brunnaCarvalho", {
+        fetch("https://playground.4geeks.com/todo/users/BrunnaCarvalho", {
             method: "PUT",
             body: JSON.stringify(toDoList),
             headers: {
