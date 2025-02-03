@@ -1,36 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const ToDo = () => {
     const [inputText, setInputText] = useState("");
-    const [task, setTask] = useState(["Walk the dog"]);
+    const [tasks, setTasks] = useState([]);
+    const user = "BrunnaCarvalho"; // Nombre de usuario
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (inputText.trim() === "") return;
+    // Función para cargar las tareas desde la API al montar el componente
+    useEffect(() => {
+        fetch(`https://playground.4geeks.com/todo/users/${user}`)
+            .then((response) => {
+                if (!response.ok) {
+                    // Si el usuario no existe, lo creamos
+                    return fetch(`https://playground.4geeks.com/todo/users/${user}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify([]), // Crear usuario con una lista vacía de tareas
+                    });
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.todos) {
+                    setTasks(data.todos.map((todo) => todo.label)); // Extraer las tareas
+                }
+            })
+            .catch((error) => console.log("Error al cargar tareas:", error));
+    }, []);
 
-        const updatedTasks = [...task, inputText];
-        setTask(updatedTasks);
-        setInputText("");
-
+    // Función para enviar tareas a la API
+    const updateTasksInAPI = (updatedTasks) => {
         const toDoList = updatedTasks.map((item) => ({
             label: item,
             done: false,
         }));
 
-        fetch("https://playground.4geeks.com/todo/users/BrunnaCarvalho", {
+        fetch(`https://playground.4geeks.com/todo/users/${user}`, {
             method: "PUT",
             body: JSON.stringify(toDoList),
             headers: {
                 "Content-Type": "application/json",
             },
         })
-            .then((response) => response.text())
-            .then((result) => console.log(result))
-            .catch((error) => console.log("Error:", error));
+            .then((response) => response.json())
+            .then((result) => console.log("Tareas actualizadas:", result))
+            .catch((error) => console.log("Error al actualizar tareas:", error));
     };
 
-    const handleDelete = (i) => {
-        setTask(task.filter((_, index) => index !== i));
+    // Función para manejar el envío del formulario
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (inputText.trim() === "") return;
+
+        const updatedTasks = [...tasks, inputText];
+        setTasks(updatedTasks);
+        setInputText("");
+        updateTasksInAPI(updatedTasks); // Actualizar la API
+    };
+
+    // Función para eliminar una tarea
+    const handleDelete = (index) => {
+        const updatedTasks = tasks.filter((_, i) => i !== index);
+        setTasks(updatedTasks);
+        updateTasksInAPI(updatedTasks); // Actualizar la API
     };
 
     return (
@@ -45,8 +78,9 @@ const ToDo = () => {
                     type="text"
                     placeholder="No tasks, add a task"
                 />
+                <button type="submit">Add Task</button>
                 <ul className="list-group">
-                    {task.map((item, index) => (
+                    {tasks.map((item, index) => (
                         <li key={index} className="list-group-item d-flex justify-content-between">
                             <span>{item}</span>
                             <button
