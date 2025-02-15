@@ -3,74 +3,61 @@ import React, { useState, useEffect } from "react";
 const ToDo = () => {
     const [inputText, setInputText] = useState("");
     const [tasks, setTasks] = useState([]);
-    const user = "BrunnaCarvalho"; // Nombre de usuario
+    const user = "BrunnaCarvalho"; 
 
-    // Función para obtener las tareas del usuario
     const fetchTasks = () => {
         fetch(`https://playground.4geeks.com/todo/users/${user}`)
             .then(response => {
                 if (response.status === 404) {
-                    // Si el usuario no existe, lo creamos
                     return createUser();
                 }
                 return response.json();
             })
             .then(data => {
                 if (data.todos) {
-                    setTasks(data.todos.map(todo => todo.label)); // Extraer las tareas
+                    setTasks(data.todos.map(todo => todo.label));
                 }
             })
             .catch(error => console.log("Error al cargar tareas:", error));
     };
 
-    // Función para crear el usuario en la API
     const createUser = () => {
         return fetch(`https://playground.4geeks.com/todo/users/${user}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify([{ label: "Nueva tarea", done: false }]), // Creamos con una tarea inicial
+            body: JSON.stringify([]),
         })
             .then(response => response.json())
-            .then(() => fetchTasks()) // Llamamos a fetchTasks para cargar las tareas después de crear el usuario
+            .then(() => fetchTasks())
             .catch(error => console.log("Error al crear usuario:", error));
     };
 
-    // Función para actualizar las tareas en la API
-    const updateTasksInAPI = (updatedTasks) => {
-        const toDoList = updatedTasks.map(item => ({
-            label: item,
-            done: false,
-        }));
-
-        fetch(`https://playground.4geeks.com/todo/users/${user}`, {
-            method: "PUT",
+    const addTaskToAPI = (newTask) => {
+        fetch(`https://playground.4geeks.com/todo/todos/${user}`, {
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(toDoList),
+            body: JSON.stringify({ label: newTask, done: false }),
         })
             .then(response => response.json())
-            .then(() => fetchTasks()) // Recargar tareas después de actualizar
-            .catch(error => console.log("Error al actualizar tareas:", error));
+            .then(() => fetchTasks())
+            .catch(error => console.log("Error al agregar tarea:", error));
     };
 
-    // Función para manejar el envío del formulario
+    const deleteAllTasks = () => {
+        fetch(`https://playground.4geeks.com/todo/users/${user}`, {
+            method: "DELETE" 
+        })
+            .then(() => setTasks([]))
+            .catch(error => console.log("Error al eliminar todas las tareas:", error));
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (inputText.trim() === "") return;
-
-        const updatedTasks = [...tasks, inputText];
-        setTasks(updatedTasks);
+        addTaskToAPI(inputText);
         setInputText("");
-        updateTasksInAPI(updatedTasks);
     };
 
-    // Función para eliminar una tarea
-    const handleDelete = (index) => {
-        const updatedTasks = tasks.filter((_, i) => i !== index);
-        setTasks(updatedTasks);
-        updateTasksInAPI(updatedTasks);
-    };
-
-    // Cargar tareas al montar el componente
     useEffect(() => {
         fetchTasks();
     }, []);
@@ -88,16 +75,11 @@ const ToDo = () => {
                     placeholder="No tasks, add a task"
                 />
                 <button type="submit">Add Task</button>
+                <button type="button" onClick={deleteAllTasks}>Delete All Tasks</button>
                 <ul className="list-group">
                     {tasks.map((item, index) => (
                         <li key={index} className="list-group-item d-flex justify-content-between">
                             <span>{item}</span>
-                            <button
-                                type="button"
-                                className="btn-close"
-                                onClick={() => handleDelete(index)}
-                                aria-label="Eliminar tarea"
-                            />
                         </li>
                     ))}
                 </ul>
@@ -107,3 +89,4 @@ const ToDo = () => {
 };
 
 export default ToDo;
+
